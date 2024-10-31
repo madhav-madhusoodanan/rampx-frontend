@@ -17,9 +17,6 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@reown/appkit": "^1.1.8",
-    "@reown/appkit-adapter-wagmi": "^1.1.8",
-    "@tanstack/react-query": "^5.59.16",
     "@tanstack/vue-query": "^5.59.16",
     "@wagmi/vue": "^0.0.56",
     "autoprefixer": "^10.4.20",
