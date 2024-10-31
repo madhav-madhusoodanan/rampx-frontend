@@ -1,6 +1,8 @@
 // stores/useTokenStore.ts
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+// import { Chain } from "viem/types/chain"
+import { abstractTestnet, sepolia } from "viem/chains"
 
 // Interfaces
 interface NativeCurrency {
@@ -28,31 +30,39 @@ interface Token {
   logoURI: string
 }
 
-interface Chain {
-  key: string
-  chainType: string
-  name: string
-  coin: string
-  id: number
-  mainnet: boolean
-  logoURI: string
-  tokenlistUrl: string
-  faucetUrls?: string[]
-  multicallAddress: string
-  metamask: MetamaskConfig
-  nativeToken: Token
-  diamondAddress: string
-  permit2: string
-}
-
 interface TokensByChain {
-  [chainId: string]: Token[]
+  [chainId: number]: Token[]
 }
 
 export const useTokenStore = defineStore('tokens', () => {
   // State
-  const tokens = ref<TokensByChain>({})
-  const chains = ref<Chain[]>([])
+  const tokens = ref<TokensByChain>(
+    {
+      11124: [{
+        "chainId": 11124,
+        "address": "0x0000000000000000000000000000000000000000",
+        "symbol": "ETH",
+        "name": "ETH",
+        "decimals": 18,
+        "priceUSD": "2656.66",
+        "coinKey": "ETH",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"
+      },
+      {
+        "chainId": 11124,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "decimals": 6,
+        "priceUSD": "1.0004001600640255",
+        "coinKey": "USDC",
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+      }]
+    }
+  )
+
+  const chains = ref<any[]>([abstractTestnet, sepolia])
+
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
@@ -73,7 +83,7 @@ export const useTokenStore = defineStore('tokens', () => {
 
   const getChainById = computed(() => {
     return (chainId: number) =>
-      chains.value.find((chain: Chain) => chain.id === chainId)
+      chains.value.find((chain: any) => chain.id === chainId)
   })
 
   const getNativeToken = computed(() => {
@@ -90,11 +100,11 @@ export const useTokenStore = defineStore('tokens', () => {
       error.value = null
 
       // Replace with your actual API endpoint
-      const response = await fetch(`/api/tokens/${chainId}`)
+      const response = await fetch(`https://li.quest/v1/tokens?chains=${chainId}`)
       if (!response.ok) throw new Error('Failed to fetch tokens')
 
       const data = await response.json()
-      tokens.value[chainId] = data
+      tokens.value[chainId] = data["tokens"][`${chainId}`]
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Unknown error occurred'
       console.error('Error fetching tokens:', err)

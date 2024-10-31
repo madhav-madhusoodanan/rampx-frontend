@@ -84,7 +84,7 @@ export const useManagerStore = defineStore('vaults', () => {
   const getManagerTokenProportion = computed(() => {
     return (managerId: string) => {
       const manager = managers.value.find((manager: Manager) => manager.id === managerId)
-      return manager.tokens
+      return manager?.tokens ?? []
     }
   })
 

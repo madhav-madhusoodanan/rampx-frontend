@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
 const props = defineProps({
   isOpen: {
@@ -10,7 +10,7 @@ const emit = defineEmits(['close']);
 const handleBackdropClick = () => {
   emit('close');
 }
-const stopPropagation = e => {
+const stopPropagation = (e: MouseEvent) => {
   e.stopPropagation();
 }
 </script>

@@ -1,5 +1,6 @@
 {
   "extends": "./tsconfig.app.json",
+  "include": ["wagmi.config.ts"],
   "exclude": [],
   "compilerOptions": {
     "composite": true,

@@ -9,16 +9,16 @@
       <div class="relative min-w-[120px]">
         <button
           @click="toggleTokenDropdown"
-          class="flex items-center gap-2 p-2 bg-primary-800"
+          class="flex items-center gap-2 p-2 px-3 bg-primary-800"
         >
           <img
-            v-if="selectedToken.icon"
-            :src="selectedToken.icon"
+            v-if="selectedToken?.logoURI"
+            :src="selectedToken?.logoURI"
             class="w-5 h-5 rounded-full"
-            alt="token icon"
+            alt=""
           />
-          <span>{{ selectedToken.symbol }}</span>
-          <i class="fas fa-chevron-down text-sm"></i>
+          <span v-else class="h-5 w-5" />
+          <span>{{ selectedToken?.symbol }}</span>
         </button>
       </div>
 
@@ -27,53 +27,78 @@
         :isOpen="isTokenDropdownOpen"
         @close="isTokenDropdownOpen = false"
       >
-        <div class="p-2 flex justify-center w-full text-center text-white"> Select Token </div>
-        <div class="p-2">
-          <input
-            v-model="tokenSearch"
-            type="text"
-            placeholder="Search tokens..."
-            class="w-full p-2 border rounded"
-          />
-        </div>
-        <div class="max-h-60 overflow-y-auto">
-          <button
-            v-for="token in filteredTokens"
-            :key="token.id"
-            @click="selectToken(token)"
-            class="w-full flex items-center gap-2 p-2 hover:bg-gray-100"
-          >
-            <img
-              v-if="token.icon"
-              :src="token.icon"
-              class="w-5 h-5 rounded-full"
-              alt="token icon"
+        <div class="flex flex-col gap-4">
+          <div>
+            <div class="py-2 flex justify-start w-full text-left text-white"> Select Chain </div>
+            <div class="gap-2 grid grid-cols-2 grid-row-2">
+              <button
+                v-for="chain in tokenAndChainStore.chains"
+                :key="chain.id"
+                @click="selectChain(chain)"
+                class="w-full flex items-center gap-2 rounded bg-primary-900 hover:bg-primary-700 transition-colors animate-300 border border-primary-700 text-primary-500"
+              >
+                <!-- <img
+                  v-if="chain.icon"
+                  :src="chain.icon"
+                  class="w-5 h-5 rounded-full"
+                  alt=""
+                /> -->
+                <span class="p-2"> {{ chain?.name }}</span>
+              </button>
+            </div>
+          </div>
+          <div>
+            <div class="py-2 flex justify-start w-full text-left text-white"> Select Token </div>
+            <input
+              v-model="tokenSearch"
+              type="text"
+              placeholder="Search tokens..."
+              class="w-full p-2 mb-2 border rounded"
             />
-            <span>{{ token.symbol }}</span>
-          </button>
+            <div class="max-h-60 overflow-y-auto flex flex-col gap-1">
+              <button
+                v-for="token in filteredTokens"
+                :key="token?.name"
+                @click="selectToken(token)"
+                class="w-full flex items-center gap-2 p-2 bg-primary-900 border border-primary-700 text-primary-500 rounded"
+              >
+                <img
+                  v-if="token?.logoURI"
+                  :src="token?.logoURI"
+                  class="w-5 h-5 rounded-full"
+                  alt=""
+                />
+                <span>{{ token?.symbol }}</span>
+              </button>
+            </div>
+          </div>
         </div>
-      </Modal>
+        </Modal>
 
-      <!-- Amount Input -->
-      <input
-        v-model.number="amount"
-        type="numeric"
-        placeholder="Amount"
-        class="flex-grow p-1 focus:outline-none bg-primary-900 text-right"
-        @input="validateAmount"
-      />
+        <!-- Amount Input -->
+        <input
+          v-model.number="selectedAmount"
+          type="numeric"
+          placeholder="Amount"
+          class="flex-grow p-1 focus:outline-none bg-primary-900 text-right"
+          @input="validateAmount"
+        />
+      </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import Modal from '../atoms/Modal.vue'
 
+import { useTokenStore } from "../../stores/chainTokens"
+
+// import { Chain } from "viem"
+
 interface Token {
-  id: number
+  name: string
   symbol: string
-  icon: string | null
+  logoURI: string | null
 }
 
 interface Chain {
@@ -82,47 +107,30 @@ interface Chain {
   icon: string | null
 }
 
-interface TokenInputEmits {
-  (e: 'update:token', value: Token): void
-  (e: 'update:chain', value: Chain): void
-  (e: 'update:amount', value: number): void
-  (e: 'change', value: { token: Token; chain: Chain; amount: number }): void
-}
-
-interface TokenInputProps {
-  tokens: Token[]
-  chains: Chain[]
-  modelValue?: {
-    token?: Token
-    chain?: Chain
-    amount?: number
-  }
+interface InputProps {
   title: String
 }
 
-const props = withDefaults(defineProps<TokenInputProps>(), {
-  modelValue: () => ({}),
+const props = withDefaults(defineProps<InputProps>(), {
   title: () => "",
-  tokens: () => []
 })
 
-const emit = defineEmits<TokenInputEmits>()
+// Stores
+const tokenAndChainStore = useTokenStore()
 
 // State
 const isTokenDropdownOpen = ref(false)
 const isChainDropdownOpen = ref(false)
 const tokenSearch = ref('')
-const amount = ref<number | null>(props.modelValue?.amount ?? null)
-const selectedToken = ref<Token>(
-  props.modelValue?.token ?? { id: 0, symbol: 'Select Token', icon: null }
-)
-const selectedChain = ref<Chain>(
-  props.modelValue?.chain ?? { id: 0, name: 'Select Chain', icon: null }
-)
+
+// Two-way boound variables
+const selectedToken = defineModel<Token>('token')
+const selectedChain = defineModel<Chain>('chain')
+const selectedAmount = defineModel<number>('amount')
 
 // Computed
 const filteredTokens = computed(() => {
-  return props.tokens.filter(token =>
+  return (tokenAndChainStore.tokens[selectedChain.value?.id ?? 0] ?? []).filter((token: Token) =>
     token.symbol.toLowerCase().includes(tokenSearch.value.toLowerCase())
   )
 })
@@ -141,34 +149,17 @@ const toggleChainDropdown = () => {
 const selectToken = (token: Token) => {
   selectedToken.value = token
   isTokenDropdownOpen.value = false
-  emitChange()
 }
 
 const selectChain = (chain: Chain) => {
   selectedChain.value = chain
   isChainDropdownOpen.value = false
-  emitChange()
 }
 
 const validateAmount = (event: Event) => {
   const target = event.target as HTMLInputElement
   const value = target.value
-  amount.value = Number(value)
-
-  emitChange()
-}
-
-const emitChange = () => {
-  emit('update:token', selectedToken.value)
-  emit('update:chain', selectedChain.value)
-  if (amount.value !== null) {
-    emit('update:amount', amount.value)
-  }
-  emit('change', {
-    token: selectedToken.value,
-    chain: selectedChain.value,
-    amount: amount.value ?? 0
-  })
+  selectedAmount.value = Number(value)
 }
 
 // Lifecycle
@@ -184,23 +175,9 @@ onMounted(() => {
   })
 })
 
-// Watch for prop changes
-watch(() => props.modelValue, (newValue) => {
-  if (newValue?.token) {
-    selectedToken.value = newValue.token
-  }
-  if (newValue?.chain) {
-    selectedChain.value = newValue.chain
-  }
-  if (newValue?.amount !== undefined) {
-    amount.value = newValue.amount
-  }
-}, { deep: true })
 </script>
 
 <style scoped>
-
-
 /* Hide number input spinners */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {

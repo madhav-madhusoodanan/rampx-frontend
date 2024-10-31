@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAccount, useConnect, useDisconnect, useEnsName, Connector } from '@wagmi/vue'
+import { useAccount, useConnect, useDisconnect, useEnsName, type Connector } from '@wagmi/vue'
 import TickIcon from '../icons/IconTick.vue';
 import Modal from '../atoms/Modal.vue'
 
 const isModalOpen = ref(false)
-const connector = ref<Connector>(undefined)
+const connector = ref<Connector | undefined>(undefined)
 
 const { address, isConnected, isConnecting } = useAccount()
 const { connectors, connect } = useConnect()
@@ -14,7 +14,11 @@ const { data: ensName } = useEnsName({
   address,
 })
 
-const availableWallets = {
+interface AvailableWalletsType {
+  [key: string]: string
+}
+
+const availableWallets: AvailableWalletsType  = {
   MetaMask:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/768px-MetaMask_Fox.svg.png',
   Safe: 'https://images.mirror-media.xyz/publication-images/NxbCAMO-GXXL7bZ7yu6lA.png',
@@ -36,7 +40,7 @@ const connectFunction = (_connector: Connector) => {
   <button
     v-if="!isConnected"
     @click="isModalOpen = true"
-    class="border-2 border-primary-500 px-6 py-2 text-lg text-primary-500 shadow shadow-primary-500 text-shadow-primary-500"
+    class="border-2 border-primary-500 px-4 py-2 text-lg text-primary-500 shadow shadow-primary-500 text-shadow-primary-500"
   >
     CONNECT WALLET
   </button>
@@ -44,7 +48,7 @@ const connectFunction = (_connector: Connector) => {
   <!-- Navbar components when the user is connected -->
   <div v-else class="flex items-center gap-2">
     <span class="px-4 py-2 text-lg bg-neutral-custom-900 border border-primary-500 text-primary-500 text-shadow-primary-500 rounded">
-      {{ ensName || address.substring(0, 12) }}
+      {{ ensName || address?.substring(0, 12) }}
     </span>
     <button
       @click="disconnect()"
@@ -57,17 +61,8 @@ const connectFunction = (_connector: Connector) => {
   <!-- Modal when the user is in the process of connecting wallet -->
   <Modal
     :isOpen="isModalOpen"
-    @close="closeModal"
+    @close="isModalOpen = false"
   >
-    <template #error>
-      <div
-        v-if="error"
-        class="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded"
-      >
-        {{ error.message }}
-      </div>
-    </template>
-
     <!-- Appears when a wallet is requested for connection -->
     <Transition
       enter-from-class="opacity-0"
@@ -82,10 +77,12 @@ const connectFunction = (_connector: Connector) => {
         v-if="isConnecting"
       >
         <div class="flex flex-col gap-2 items-center text-center">
-          <span class="text-primary-500 w-1/2 text-3xl font-semibold">Approve the connection in {{ connector?.name }}</span>
-          <div class="my-4"></div>
-          <span class="text-white w-5/6 text-lg">Having problems? click below</span>
-          <button @click="connectFunction(connector)" class="font-semibold text-primary-500 text-lg text-center px-2 py-2">RELAUNCH CONNECTION</button> 
+          <span class="text-primary-500 w-2/3 text-3xl font-semibold">Approve the connection in {{ connector?.name }}</span>
+          <!--
+            <div class="my-4"></div>
+            <span class="text-white w-5/6 text-lg">Having problems? click below</span>
+            <button @click="connectFunction(connector)" class="font-semibold text-primary-500 border border-primary-700 bg-primary-800 text-lg text-center px-2 py-1">RELAUNCH CONNECTION</button>
+          -->
         </div>
       </div>
     </Transition>

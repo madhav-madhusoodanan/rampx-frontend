@@ -4,7 +4,7 @@ import RouteManager from "./router/RouteManager.vue"
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col h-screen bg-neutral-custom-900">
     <RouteManager />
     <RouterView />
   </div>
