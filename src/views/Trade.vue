@@ -6,12 +6,14 @@ import SwitchIcon from '../components/icons/IconSwitch.vue';
 
 import { useTokenStore } from "../stores/chainTokens";
 
-const sellChain = ref(undefined)
-const sellToken = ref(undefined)
+const tokenChainStore = useTokenStore();
+
+const sellChain = ref(tokenChainStore.chains[0])
+const sellToken = ref(tokenChainStore.tokens[sellChain.value.id][0])
 const sellAmount = ref(undefined)
 
-const buyChain = ref(undefined)
-const buyToken = ref(undefined)
+const buyChain = ref(tokenChainStore.chains[0])
+const buyToken = ref(tokenChainStore.tokens[sellChain.value.id][0])
 const buyAmount = ref(undefined)
 
 const switchBuySell = () => {
