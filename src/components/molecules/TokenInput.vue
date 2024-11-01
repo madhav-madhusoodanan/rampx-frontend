@@ -36,6 +36,7 @@
                 :key="chain.id"
                 @click="selectChain(chain)"
                 class="w-full flex items-center gap-2 rounded bg-primary-900 hover:bg-primary-700 transition-colors animate-300 border border-primary-700 text-primary-500"
+                :class="{ '!bg-primary-500 !text-black': selectedChain?.id === chain.id }"
               >
                 <!-- <img
                   v-if="chain.icon"
