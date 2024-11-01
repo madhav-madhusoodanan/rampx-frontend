@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "npx http-server ./dist",
+    "start": "npx http-server ./dist --proxy http://localhost:$(echo ${PORT=8080})?",
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
