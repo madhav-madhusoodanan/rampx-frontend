@@ -6,7 +6,7 @@
       class="border border-primary-700 p-2 flex items-center gap-2 min-h-[40px] bg-primary-900 transition-shadow duration-200 shadow-custom hover:shadow-primary-500"
     >
       <!-- Token Dropdown -->
-      <div class="relative min-w-[120px]">
+      <div class="relative min-w-[80px]">
         <button
           @click="toggleTokenDropdown"
           class="flex items-center gap-2 p-2 px-3 bg-primary-800"
@@ -81,7 +81,7 @@
           v-model.number="selectedAmount"
           type="numeric"
           placeholder="Amount"
-          class="flex-grow p-1 focus:outline-none bg-primary-900 text-right"
+          class="p-1 focus:outline-none bg-primary-900 text-right max-w-[180px] sm:max-w-80 flex-grow-0 sm:flex-grow "
           @input="validateAmount"
         />
       </div>

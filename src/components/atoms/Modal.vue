@@ -40,7 +40,7 @@ const stopPropagation = (e: MouseEvent) => {
         >
           <div
             v-if="isOpen"
-            class="relative w-full max-w-md p-6 bg-neutral-custom-900 rounded-lg shadow-xl border border-primary-500"
+            class="relative w-full max-w-[380px] sm:max-w-md p-6 bg-neutral-custom-900 rounded-lg shadow-xl border border-primary-500"
             @click="stopPropagation"
           >
             <div class="flex flex-row-reverse justify-between mb-4 absolute top-4 right-4">

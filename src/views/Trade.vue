@@ -36,7 +36,7 @@ const switchBuySell = () => {
 <template>
   <div class="text-white">
     <div class="grid place-items-center h-[91vh]">
-      <div class="w-[420px] border border-primary-500 p-8 flex flex-col items-center gap-4">
+      <div class="w-[360px] sm:w-[420px] border border-primary-500 p-8 flex flex-col items-center gap-4">
         <h1 class="text-xl w-full text-left font-semibold">EXCHANGE</h1>
         <div class="h-[2px] bg-primary-700 w-full my-1" />
         <TokenInput
