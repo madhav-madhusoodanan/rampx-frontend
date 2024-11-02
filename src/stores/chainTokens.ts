@@ -1,7 +1,7 @@
 // stores/useTokenStore.ts
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-// import { Chain } from "viem/types/chain"
+import { type Chain } from "viem"
 import { abstractTestnet, sepolia } from "viem/chains"
 
 // Interfaces
@@ -61,7 +61,7 @@ export const useTokenStore = defineStore('tokens', () => {
     }
   )
 
-  const chains = ref<any[]>([abstractTestnet, sepolia])
+  const chains = ref<Chain[]>([abstractTestnet, sepolia])
 
   const isLoading = ref(false)
   const error = ref<string | null>(null)
@@ -83,15 +83,9 @@ export const useTokenStore = defineStore('tokens', () => {
 
   const getChainById = computed(() => {
     return (chainId: number) =>
-      chains.value.find((chain: any) => chain.id === chainId)
+      chains.value.find((chain: Chain) => chain.id === chainId)
   })
 
-  const getNativeToken = computed(() => {
-    return (chainId: number) => {
-      const chain = getChainById.value(chainId)
-      return chain?.nativeToken
-    }
-  })
 
   // Actions
   const fetchTokens = async (chainId: number) => {
@@ -149,7 +143,6 @@ export const useTokenStore = defineStore('tokens', () => {
     getTokensByChainId,
     getTokenByAddress,
     getChainById,
-    getNativeToken,
 
     // Actions
     fetchTokens,

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {ref} from "vue";
+import {type Chain} from "viem";
 import TokenInput from '../components/molecules/TokenInput.vue';
 import Button from '../components/atoms/Button.vue';
 import SwitchIcon from '../components/icons/IconSwitch.vue';
@@ -8,11 +9,11 @@ import { useTokenStore } from "../stores/chainTokens";
 
 const tokenChainStore = useTokenStore();
 
-const sellChain = ref(tokenChainStore.chains[0])
+const sellChain = ref<Chain>(tokenChainStore.chains[0])
 const sellToken = ref(tokenChainStore.tokens[sellChain.value.id][0])
 const sellAmount = ref(undefined)
 
-const buyChain = ref(tokenChainStore.chains[0])
+const buyChain = ref<Chain>(tokenChainStore.chains[0])
 const buyToken = ref(tokenChainStore.tokens[sellChain.value.id][0])
 const buyAmount = ref(undefined)
 

@@ -90,22 +90,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { type Chain } from "viem"
 import Modal from '../atoms/Modal.vue'
 
 import { useTokenStore } from "../../stores/chainTokens"
 
-// import { Chain } from "viem"
 
 interface Token {
   name: string
   symbol: string
   logoURI: string | null
-}
-
-interface Chain {
-  id: number
-  name: string
-  icon: string | null
 }
 
 interface InputProps {
