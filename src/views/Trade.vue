@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import {ref} from "vue";
-import {type Chain} from "viem";
-import TokenInput from '../components/molecules/TokenInput.vue';
-import Button from '../components/atoms/Button.vue';
-import SwitchIcon from '../components/icons/IconSwitch.vue';
+import { ref } from 'vue'
+import { type Chain } from 'viem'
+import TokenInput from '../components/molecules/TokenInput.vue'
+import Button from '../components/atoms/Button.vue'
+import SwitchIcon from '../components/icons/IconSwitch.vue'
 
-import { useTokenStore } from "../stores/chainTokens";
+import { useTokenStore } from '../stores/chainTokens'
 
-const tokenChainStore = useTokenStore();
+const tokenChainStore = useTokenStore()
 
 const sellChain = ref<Chain>(tokenChainStore.chains[0])
 const sellToken = ref(tokenChainStore.tokens[sellChain.value.id][0])
@@ -30,13 +30,14 @@ const switchBuySell = () => {
   buyAmount.value = sellAmount.value
   sellAmount.value = tempAmount
 }
-
 </script>
 
 <template>
   <div class="text-white">
     <div class="grid place-items-center h-[91vh]">
-      <div class="w-[360px] sm:w-[420px] border border-primary-500 p-8 flex flex-col items-center gap-4">
+      <div
+        class="w-[360px] sm:w-[420px] border border-primary-500 p-8 flex flex-col items-center gap-4"
+      >
         <h1 class="text-xl w-full text-left font-semibold">EXCHANGE</h1>
         <div class="h-[2px] bg-primary-700 w-full my-1" />
         <TokenInput
@@ -45,14 +46,16 @@ const switchBuySell = () => {
           v-model:amount="sellAmount"
           title="FROM"
         />
-        <div class="flex flex-row justify-between w-full items-center mt-8 mb-2">
+        <div
+          class="flex flex-row justify-between w-full items-center mt-8 mb-2"
+        >
           <div class="h-px bg-primary-700 w-5/12" />
           <button
             @click="switchBuySell"
             class="h-8 w-8 bg-neutral-custom-900 border border-primary-500 grid place-items-center text-primary-500"
           >
             <SwitchIcon />
-        </button>
+          </button>
           <div class="h-px bg-primary-700 w-5/12" />
         </div>
         <TokenInput
@@ -61,9 +64,7 @@ const switchBuySell = () => {
           v-model:amount="buyAmount"
           title="TO"
         />
-        <Button :onclick="console.log">
-          SWAP
-        </Button>
+        <Button :onclick="console.log"> SWAP </Button>
       </div>
     </div>
   </div>

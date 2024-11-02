@@ -1,6 +1,6 @@
 <template>
   <div class="relative gap-2 w-full flex flex-col max-w-[500px]">
-    <h2 class="text-white font-semibold"> {{ props.title }} </h2>
+    <h2 class="text-white font-semibold">{{ props.title }}</h2>
     <!-- Main input container with flexbox layout -->
     <div
       class="border border-primary-700 p-2 flex items-center gap-2 min-h-[40px] bg-primary-900 transition-shadow duration-200 shadow-custom hover:shadow-primary-500"
@@ -23,20 +23,21 @@
       </div>
 
       <!-- Token Dropdown Menu -->
-      <Modal
-        :isOpen="isTokenDropdownOpen"
-        @close="isTokenDropdownOpen = false"
-      >
+      <Modal :isOpen="isTokenDropdownOpen" @close="isTokenDropdownOpen = false">
         <div class="flex flex-col gap-4">
           <div>
-            <div class="py-2 flex justify-start w-full text-left text-white"> Select Chain </div>
+            <div class="py-2 flex justify-start w-full text-left text-white">
+              Select Chain
+            </div>
             <div class="gap-2 grid grid-cols-2 grid-row-2">
               <button
                 v-for="chain in tokenAndChainStore.chains"
                 :key="chain.id"
                 @click="selectChain(chain)"
                 class="w-full flex items-center gap-2 rounded bg-primary-900 hover:bg-primary-700 transition-colors animate-300 border border-primary-700 text-primary-500"
-                :class="{ '!bg-primary-500 !text-black': selectedChain?.id === chain.id }"
+                :class="{
+                  '!bg-primary-500 !text-black': selectedChain?.id === chain.id,
+                }"
               >
                 <!-- <img
                   v-if="chain.icon"
@@ -49,7 +50,9 @@
             </div>
           </div>
           <div>
-            <div class="py-2 flex justify-start w-full text-left text-white"> Select Token </div>
+            <div class="py-2 flex justify-start w-full text-left text-white">
+              Select Token
+            </div>
             <input
               v-model="tokenSearch"
               type="text"
@@ -74,27 +77,26 @@
             </div>
           </div>
         </div>
-        </Modal>
+      </Modal>
 
-        <!-- Amount Input -->
-        <input
-          v-model.number="selectedAmount"
-          type="numeric"
-          placeholder="Amount"
-          class="p-1 focus:outline-none bg-primary-900 text-right max-w-[180px] sm:max-w-80 flex-grow-0 sm:flex-grow "
-          @input="validateAmount"
-        />
-      </div>
+      <!-- Amount Input -->
+      <input
+        v-model.number="selectedAmount"
+        type="numeric"
+        placeholder="Amount"
+        class="p-1 focus:outline-none bg-primary-900 text-right max-w-[180px] sm:max-w-80 flex-grow-0 sm:flex-grow"
+        @input="validateAmount"
+      />
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
-import { type Chain } from "viem"
+import { type Chain } from 'viem'
 import Modal from '../atoms/Modal.vue'
 
-import { useTokenStore } from "../../stores/chainTokens"
-
+import { useTokenStore } from '../../stores/chainTokens'
 
 interface Token {
   name: string
@@ -107,7 +109,7 @@ interface InputProps {
 }
 
 const props = withDefaults(defineProps<InputProps>(), {
-  title: () => "",
+  title: () => '',
 })
 
 // Stores
@@ -125,19 +127,20 @@ const selectedAmount = defineModel<number>('amount')
 
 // Computed
 const filteredTokens = computed(() => {
-  return (tokenAndChainStore.tokens[selectedChain.value?.id ?? 0] ?? []).filter((token: Token) =>
-    token.symbol.toLowerCase().includes(tokenSearch.value.toLowerCase())
+  return (tokenAndChainStore.tokens[selectedChain.value?.id ?? 0] ?? []).filter(
+    (token: Token) =>
+      token.symbol.toLowerCase().includes(tokenSearch.value.toLowerCase()),
   )
 })
 
 // Methods
 const toggleTokenDropdown = () => {
-  console.log("token dropdown!")
+  console.log('token dropdown!')
   isTokenDropdownOpen.value = !isTokenDropdownOpen.value
 }
 
 const toggleChainDropdown = () => {
-  console.log("chain dropdown!")
+  console.log('chain dropdown!')
   isChainDropdownOpen.value = !isChainDropdownOpen.value
 }
 
@@ -169,18 +172,17 @@ onMounted(() => {
     document.removeEventListener('click', handleClickOutside)
   })
 })
-
 </script>
 
 <style scoped>
 /* Hide number input spinners */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 </style>

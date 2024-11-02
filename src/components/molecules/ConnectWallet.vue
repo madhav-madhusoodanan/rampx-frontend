@@ -40,7 +40,7 @@ const connectFunction = (_connector: Connector) => {
   <button
     v-if="!isConnected"
     @click="isModalOpen = true"
-    class="border-2 border-primary-500 px-4 py-2 text-lg text-primary-500 shadow shadow-primary-500 text-shadow-primary-500"
+    class="border-2 border-primary-500 px-4 py-2 text-lg text-primary-500 shadow shadow-primary-500 text-shadow-primary-500 w-max"
   >
     CONNECT WALLET
   </button>
