@@ -9,7 +9,7 @@
       <div class="relative min-w-[80px]">
         <button
           @click="toggleTokenDropdown"
-          class="flex items-center gap-2 p-2 px-3 bg-primary-800"
+          class="flex items-center gap-2 p-1 px-3 bg-primary-800"
         >
           <img
             v-if="selectedToken?.logoURI"
@@ -18,7 +18,10 @@
             alt=""
           />
           <span v-else class="h-5 w-5" />
-          <span>{{ selectedToken?.symbol }}</span>
+          <div class="flex flex-col gap-px text-left">
+            <span>{{ selectedToken?.symbol }}</span>
+            <span class="text-xs">{{ selectedChain?.name }}</span>
+          </div>
         </button>
       </div>
 
@@ -72,7 +75,7 @@
                   class="w-5 h-5 rounded-full"
                   alt=""
                 />
-                <span>{{ token?.symbol }}</span>
+                <span class="">{{ token?.symbol }}</span>
               </button>
             </div>
           </div>

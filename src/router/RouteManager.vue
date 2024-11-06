@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import RouterLink from '../components/atoms/RouterLink.vue'
-import Sidebar from '../components/atoms/Sidebar.vue'
+import RouterLink from '../components/atoms/RouterLink.vue';
+import Sidebar from '../components/molecules/Sidebar.vue';
 import ConnectWallet from '../components/molecules/ConnectWallet.vue'
 import BurgerIcon from '../components/icons/IconBurger.vue'
 
@@ -16,8 +16,9 @@ const isOpen = ref<boolean>(false)
         class="hidden lg:flex h-full gap-14 justify-end items-center text-lg py-2"
       >
         <RouterLink to="/trade">TRADE</RouterLink>
-        <RouterLink to="/perps">PERPS</RouterLink>
-        <RouterLink to="/vaults">VAULTS</RouterLink>
+        <!-- <RouterLink to="/perps">PERPS</RouterLink> -->
+        <!-- <RouterLink to="/vaults">VAULTS</RouterLink> -->
+        <RouterLink to="/markets">MARKETS</RouterLink>
         <ConnectWallet />
       </nav>
       <button
@@ -31,8 +32,8 @@ const isOpen = ref<boolean>(false)
           class="flex flex-col gap-4 p-4"
         >
           <RouterLink to="/trade">TRADE</RouterLink>
-          <RouterLink to="/perps">PERPS</RouterLink>
-          <RouterLink to="/vaults">VAULTS</RouterLink>
+          <!-- <RouterLink to="/perps">PERPS</RouterLink> -->
+          <!-- <RouterLink to="/vaults">VAULTS</RouterLink> -->
           <ConnectWallet />
         </nav>
       </Sidebar>
