@@ -98,14 +98,15 @@
     </div>
     <div class="h-5 w-full flex flex-row justify-between lining-nums text-sm px-3">
       <span class="text-neutral-400">Available Balance:</span>
-      <span>0 {{ selectedToken?.symbol }}</span>
+      <span>{{ numberFormatter.format(Number(tokenBalance?.formatted ?? "0")) + " " + selectedToken?.symbol }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
-import { useBalance, useAccount } from '@wagmi/vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, watchEffect } from 'vue'
+import { useBalance, useAccount, serialize } from '@wagmi/vue'
+import { useQueryClient } from '@tanstack/vue-query'
 import { type Hex, type Chain } from 'viem'
 import Modal from '../atoms/Modal.vue'
 
@@ -146,11 +147,15 @@ const selectedToken = defineModel<Token>('token')
 const selectedChain = defineModel<Chain>('chain')
 const selectedAmount = defineModel<number>('amount')
 
-const account = useAccount()
+const { address } = useAccount()
 
-const tokenBalance = useBalance({
-  address: account.address,
-  token: selectedToken.value?.address,
+const tokenAddress = computed(() => selectedToken.value?.address === "0x0000000000000000000000000000000000000000" ? undefined : selectedToken.value?.address)
+const queryClient = useQueryClient()
+
+const numberFormatter = new Intl.NumberFormat("en-US", {maximumFractionDigits: 6})
+const { data: tokenBalance } = useBalance({
+  address: address,
+  token: tokenAddress,
   chainId: selectedChain.value?.id
 })
 

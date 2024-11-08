@@ -77,16 +77,6 @@ const query = useQuery({
   refetchInterval: 3100
 })
 
-// Watch for query results and update the second input
-// watch(
-//   [ address, sellAmount, sellChain, buyChain, sellToken, buyToken ],
-//   async ([_userAddress, _sellChain, _buyChain, _sellToken, _buyToken, _sellAmount]) => {
-//     console.log("[LOG] before newData check")
-//     const data = await fetchData(_userAddress, _sellChain, _buyChain, _sellToken, _buyToken, _sellAmount)
-//     buyAmount.value = Number(data?.["estimate"]?.["toAmountMin"] ?? 0) / (10 ** buyToken.value.decimals) // Adjust according to your API response structure
-//   }
-// )
-
 const switchBuySell = () => {
   const tempToken = buyToken.value
   buyToken.value = sellToken.value
@@ -161,6 +151,4 @@ const switchBuySell = () => {
     /* background-color: white; */
     position: absolute;
   }
-
-
 </style>
