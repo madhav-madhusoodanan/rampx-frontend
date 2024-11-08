@@ -1,7 +1,7 @@
 // stores/useTokenStore.ts
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { type Chain } from "viem"
+import { type Chain, type Hex } from "viem"
 import { abstractTestnet, sepolia, optimism, base } from "viem/chains"
 
 // Interfaces
@@ -21,13 +21,13 @@ interface MetamaskConfig {
 
 interface Token {
   chainId: number
-  address: string
+  address: Hex
   symbol: string
   name: string
   decimals: number
   priceUSD: string
   coinKey: string
-  logoURI: string
+  logoURI: string | null
 }
 
 interface TokensByChain {

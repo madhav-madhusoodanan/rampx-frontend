@@ -3,13 +3,13 @@
     <h2 class="text-white font-semibold">{{ props.title }}</h2>
     <!-- Main input container with flexbox layout -->
     <div
-      class="border border-primary-700 p-2 flex items-center gap-2 min-h-[40px] bg-primary-900 transition-shadow duration-200 shadow-custom hover:shadow-primary-500"
+      class="border border-primary-700 p-2 flex justify-between items-center gap-2 min-h-[40px] bg-primary-900 transition-shadow duration-200 shadow-custom hover:shadow-primary-500"
     >
       <!-- Token Dropdown -->
-      <div class="relative min-w-[80px]">
+      <div class="relative flex flex-row">
         <button
           @click="toggleTokenDropdown"
-          class="flex items-center gap-2 p-1 px-3 bg-primary-800"
+          class="flex items-center gap-2 p-1 px-3 bg-primary-button-bg max-w-32 min-w-max"
         >
           <img
             v-if="selectedToken?.logoURI"
@@ -83,36 +83,53 @@
       </Modal>
 
       <!-- Amount Input -->
+      <div
+        v-if="props.loading"
+        class="p-1 h-4 focus:outline-none bg-neutral-600 animate-pulse text-right flex-shrink w-40 sm:w-52 lining-nums !text-lg font-semibold"
+      />
       <input
+        v-else
         v-model.number="selectedAmount"
         type="numeric"
         placeholder="Amount"
-        class="p-1 focus:outline-none bg-primary-900 text-right max-w-[180px] sm:max-w-80 flex-grow-0 sm:flex-grow"
+        class="p-1 focus:outline-none bg-primary-900 text-right flex-shrink w-40 sm:w-52 lining-nums !text-lg font-semibold h-auto"
         @input="validateAmount"
       />
+    </div>
+    <div class="h-5 w-full flex flex-row justify-between lining-nums text-sm px-3">
+      <span class="text-neutral-400">Available Balance:</span>
+      <span>0 {{ selectedToken?.symbol }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
-import { type Chain } from 'viem'
+import { useBalance, useAccount } from '@wagmi/vue'
+import { type Hex, type Chain } from 'viem'
 import Modal from '../atoms/Modal.vue'
 
 import { useTokenStore } from '../../stores/chainTokens'
 
 interface Token {
-  name: string
+  chainId: number
+  address: Hex
   symbol: string
+  name: string
+  decimals: number
+  priceUSD: string
+  coinKey: string
   logoURI: string | null
 }
 
 interface InputProps {
   title: String
+  loading: boolean
 }
 
 const props = withDefaults(defineProps<InputProps>(), {
   title: () => '',
+  loading: () => false
 })
 
 // Stores
@@ -123,10 +140,19 @@ const isTokenDropdownOpen = ref(false)
 const isChainDropdownOpen = ref(false)
 const tokenSearch = ref('')
 
+
 // Two-way boound variables
 const selectedToken = defineModel<Token>('token')
 const selectedChain = defineModel<Chain>('chain')
 const selectedAmount = defineModel<number>('amount')
+
+const account = useAccount()
+
+const tokenBalance = useBalance({
+  address: account.address,
+  token: selectedToken.value?.address,
+  chainId: selectedChain.value?.id
+})
 
 // Computed
 const filteredTokens = computed(() => {

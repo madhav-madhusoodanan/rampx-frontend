@@ -40,14 +40,14 @@ const connectFunction = (_connector: Connector) => {
   <button
     v-if="!isConnected"
     @click="isModalOpen = true"
-    class="border-2 border-primary-500 px-4 py-2 text-lg text-primary-500 shadow shadow-primary-500 text-shadow-primary-500 w-max"
+    class="border border-primary-500 px-4 py-2 text-lg text-primary-500 text-shadow-primary-500 font-semibold w-max"
   >
     CONNECT WALLET
   </button>
 
   <!-- Navbar components when the user is connected -->
   <div v-else class="flex items-center gap-2">
-    <span class="px-4 py-2 text-lg bg-neutral-custom-900 border border-primary-500 text-primary-500 text-shadow-primary-500 rounded">
+    <span class="px-4 py-2 text-lg bg-neutral-custom-900 border border-primary-500 text-primary-500 text-shadow-primary-500 rounded lining-nums">
       {{ ensName || address?.substring(0, 12) }}
     </span>
     <button

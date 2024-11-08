@@ -13,33 +13,46 @@ const { address, isConnected, isConnecting } = useAccount()
 
 const sellChain = ref<Chain>(tokenChainStore.chains[0])
 const sellToken = ref(tokenChainStore.tokens[sellChain.value.id][0])
-const sellAmount = ref<number>(0)
+const sellAmount = ref<number | undefined>(undefined)
 
 const buyChain = ref<Chain>(tokenChainStore.chains[0])
 const buyToken = ref(tokenChainStore.tokens[sellChain.value.id][0])
-const buyAmount = ref<number>(0)
+const buyAmount = ref<number | undefined>(undefined)
+
+const updateTime = ref<number>(Date.now())
+const isLoading = ref<boolean>(false)
 
 interface Token {
   chainId: number
-  address: string
+  address: Hex
   symbol: string
   name: string
   decimals: number
   priceUSD: string
   coinKey: string
-  logoURI: string
+  logoURI: string | null
 }
 
-const fetchData = async(sellChain: Chain, buyChain: Chain, sellToken: Token, buyToken: Token, _sellAmount: number, userAddress?: Hex, ) => {
+const fetchData = async(sellChain: Chain, buyChain: Chain, sellToken: Token, buyToken: Token, _sellAmount?: number, userAddress?: Hex, ) => {
   // Replace this with your actual API endpoint
+  isLoading.value = true
 
   if(sellToken.symbol === buyToken.symbol && sellToken.chainId === buyToken.chainId){
+    isLoading.value = false
+    updateTime.value = Date.now()
     buyAmount.value = _sellAmount
     return {}
   }
 
-  if(_sellAmount === 0){
+  if(_sellAmount === 0 || _sellAmount === undefined){
+    isLoading.value = false
+    updateTime.value = Date.now()
     buyAmount.value = 0
+    return {}
+  }
+
+  if(Date.now() - updateTime.value < 1000){
+    updateTime.value = Date.now()
     return {}
   }
 
@@ -49,6 +62,8 @@ const fetchData = async(sellChain: Chain, buyChain: Chain, sellToken: Token, buy
   const responseJSON = await response.json()
   console.log("[LOG] received response", responseJSON)
 
+  isLoading.value = false
+  updateTime.value = Date.now()
   buyAmount.value = Number(Number(Number(responseJSON?.["estimate"]?.["toAmountMin"] ?? 0) / (10 ** buyToken.decimals)).toFixed(6))
 
   return responseJSON
@@ -56,7 +71,7 @@ const fetchData = async(sellChain: Chain, buyChain: Chain, sellToken: Token, buy
 
 // Setup the query
 const query = useQuery({
-  queryKey: [ 'search', address, sellToken, buyToken],
+  queryKey: [ 'search', address, sellToken, buyToken, sellAmount],
   queryFn: () => fetchData(sellChain.value, buyChain.value, sellToken.value, buyToken.value, sellAmount.value, address.value),
   enabled: computed(() => address.value != undefined),
   refetchInterval: 3100
@@ -91,7 +106,7 @@ const switchBuySell = () => {
   <div class="text-white">
     <div class="grid place-items-center h-[91vh]">
       <div
-        class="w-[360px] sm:w-[420px] border border-primary-500 p-8 flex flex-col items-center gap-4"
+        class="w-[360px] sm:w-[420px] border border-primary-500 p-8 flex flex-col items-center gap-4 bg-neutral-custom-700"
       >
         <h1 class="text-xl w-full text-left font-semibold">EXCHANGE</h1>
         <div class="h-[2px] bg-primary-700 w-full my-1" />
@@ -99,15 +114,16 @@ const switchBuySell = () => {
           v-model:token="sellToken"
           v-model:chain="sellChain"
           v-model:amount="sellAmount"
+          :loading="false"
           title="FROM"
         />
         <div
-          class="flex flex-row justify-between w-full items-center mt-8 mb-2"
+          class="flex flex-row justify-between w-full items-center my-2"
         >
           <div class="h-px bg-primary-700 w-5/12" />
           <button
             @click="switchBuySell"
-            class="h-8 w-8 bg-neutral-custom-900 border border-primary-500 grid place-items-center text-primary-500"
+            class="h-8 w-8 bg-neutral-800 border border-primary-500 grid place-items-center text-primary-500"
           >
             <SwitchIcon />
           </button>
@@ -117,8 +133,10 @@ const switchBuySell = () => {
           v-model:token="buyToken"
           v-model:chain="buyChain"
           v-model:amount="buyAmount"
+          :loading="isLoading"
           title="TO"
         />
+        <div class="h-px bg-primary-800 w-full" />
         <Button :onclick="console.log"> SWAP </Button>
       </div>
     </div>

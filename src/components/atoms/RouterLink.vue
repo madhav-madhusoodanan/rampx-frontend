@@ -10,7 +10,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <RouterLink class="text-white" activeClass="text-primary-500 underlined" :to="to">
+  <RouterLink class="text-white font-semibold" activeClass="text-primary-500 underlined" :to="to">
     <slot></slot>
   </RouterLink>
 </template>
