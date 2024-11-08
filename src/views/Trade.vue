@@ -114,7 +114,7 @@ const switchBuySell = () => {
           <div class="h-px bg-primary-700 w-5/12" />
           <button
             @click="switchBuySell"
-            class="h-8 w-8 bg-neutral-800 border border-primary-500 grid place-items-center text-primary-500"
+            class="h-8 w-8 bg-neutral-800 border border-primary-500 grid place-items-center text-primary-500 transition-all duration-200 shadow-custom hover:shadow-primary-500 hover:text-primary-900 hover:bg-primary-500"
           >
             <SwitchIcon />
           </button>
@@ -128,7 +128,7 @@ const switchBuySell = () => {
           title="TO"
         />
         <div class="h-px bg-primary-800 w-full" />
-        <Button :onclick="console.log"> SWAP </Button>
+        <Button :onclick="console.log" class=" shadow-custom shadow-primary-500"> SWAP </Button>
       </div>
     </div>
   </div>
