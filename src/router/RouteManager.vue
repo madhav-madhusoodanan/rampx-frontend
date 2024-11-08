@@ -34,6 +34,7 @@ const isOpen = ref<boolean>(false)
           <RouterLink to="/trade">TRADE</RouterLink>
           <!-- <RouterLink to="/perps">PERPS</RouterLink> -->
           <!-- <RouterLink to="/vaults">VAULTS</RouterLink> -->
+          <RouterLink to="/markets">MARKETS</RouterLink>
           <ConnectWallet />
         </nav>
       </Sidebar>
