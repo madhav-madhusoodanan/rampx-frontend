@@ -106,7 +106,8 @@ const switchBuySell = () => {
   <div class="text-white">
     <div class="grid place-items-center h-[91vh]">
       <div
-        class="w-[360px] sm:w-[420px] border border-primary-500 p-8 flex flex-col items-center gap-4 bg-neutral-custom-700"
+        id="swap_component"
+        class="w-[360px] sm:w-[420px] p-8 flex flex-col items-center gap-4 after:bg-neutral-custom-700 bg-gradient-to-r from-primary-500 to-primary-500 via-transparent border-1 after:border-r-primary-500"
       >
         <h1 class="text-xl w-full text-left font-semibold">EXCHANGE</h1>
         <div class="h-[2px] bg-primary-700 w-full my-1" />
@@ -142,3 +143,24 @@ const switchBuySell = () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+  #swap_component {
+    clip-path: polygon(0 0,92.8% 0,100% 6.2%,100% 100%,8% 100%,0 93%,0 0);
+    position: relative;
+    z-index: 1;
+  }
+  #swap_component::after {
+    clip-path: polygon(0 0,93% 0,100% 6%,100% 100%,8% 100%,0 93%,0 0);
+    content: '';
+    z-index: -1;
+    height: calc(100% - 4.5px);
+    width: calc(100% - 4.5px);
+    top: 2px;
+    left: 2px;
+    /* background-color: white; */
+    position: absolute;
+  }
+
+
+</style>
