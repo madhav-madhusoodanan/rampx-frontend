@@ -6,10 +6,13 @@ import Button from '../components/atoms/Button.vue'
 import SwitchIcon from '../components/icons/IconSwitch.vue'
 import { useAccount } from '@wagmi/vue'
 import { useTokenStore } from '../stores/chainTokens'
-import {useQuery} from "@tanstack/vue-query"
+
+import { useRampXSwap } from "../components/functions/useRampXSwap"
+import { useExecuteSwap } from "../components/functions/useExecuteSwap"
+import { useQuery } from '@tanstack/vue-query'
 
 const tokenChainStore = useTokenStore()
-const { address, isConnected, isConnecting } = useAccount()
+// const { address, isConnected, isConnecting } = useAccount()
 
 const sellChain = ref<Chain>(tokenChainStore.chains[0])
 const sellToken = ref(tokenChainStore.tokens[sellChain.value.id][0])
@@ -17,65 +20,8 @@ const sellAmount = ref<number | undefined>(undefined)
 
 const buyChain = ref<Chain>(tokenChainStore.chains[0])
 const buyToken = ref(tokenChainStore.tokens[sellChain.value.id][0])
-const buyAmount = ref<number | undefined>(undefined)
-
-const updateTime = ref<number>(Date.now())
-const isLoading = ref<boolean>(false)
-
-interface Token {
-  chainId: number
-  address: Hex
-  symbol: string
-  name: string
-  decimals: number
-  priceUSD: string
-  coinKey: string
-  logoURI: string | null
-}
-
-const fetchData = async(sellChain: Chain, buyChain: Chain, sellToken: Token, buyToken: Token, _sellAmount?: number, userAddress?: Hex, ) => {
-  // Replace this with your actual API endpoint
-  isLoading.value = true
-
-  if(sellToken.symbol === buyToken.symbol && sellToken.chainId === buyToken.chainId){
-    isLoading.value = false
-    updateTime.value = Date.now()
-    buyAmount.value = _sellAmount
-    return {}
-  }
-
-  if(_sellAmount === 0 || _sellAmount === undefined){
-    isLoading.value = false
-    updateTime.value = Date.now()
-    buyAmount.value = 0
-    return {}
-  }
-
-  if(Date.now() - updateTime.value < 1000){
-    updateTime.value = Date.now()
-    return {}
-  }
-
-  console.log("[LOG] fetchData call")
-  const sellAmountCalculated = _sellAmount * (10 ** sellToken.decimals)
-  const response = await fetch(`https://li.quest/v1/quote?fromChain=${sellChain.id}&toChain=${buyChain.id}&fromToken=${sellToken.symbol}&toToken=${buyToken.symbol}&fromAddress=${userAddress}&fromAmount=${sellAmountCalculated}`)
-  const responseJSON = await response.json()
-  console.log("[LOG] received response", responseJSON)
-
-  isLoading.value = false
-  updateTime.value = Date.now()
-  buyAmount.value = Number(Number(Number(responseJSON?.["estimate"]?.["toAmountMin"] ?? 0) / (10 ** buyToken.decimals)).toFixed(6))
-
-  return responseJSON
-}
-
-// Setup the query
-const query = useQuery({
-  queryKey: [ 'search', address, sellToken, buyToken, sellAmount],
-  queryFn: () => fetchData(sellChain.value, buyChain.value, sellToken.value, buyToken.value, sellAmount.value, address.value),
-  enabled: computed(() => address.value != undefined),
-  refetchInterval: 3100
-})
+const { data, buyAmount, isLoading } = useRampXSwap(sellChain, sellToken, sellAmount, buyChain, buyToken)
+const onClick = useExecuteSwap()
 
 const switchBuySell = () => {
   const tempToken = buyToken.value
@@ -128,7 +74,7 @@ const switchBuySell = () => {
           title="TO"
         />
         <div class="h-px bg-primary-800 w-full" />
-        <Button :onclick="console.log" class=" shadow-custom shadow-primary-500"> SWAP </Button>
+        <Button :onclick="onClick(data)" class=" shadow-custom shadow-primary-500"> SWAP </Button>
       </div>
     </div>
   </div>
