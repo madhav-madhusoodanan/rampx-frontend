@@ -21,10 +21,12 @@ const sellAmount = ref<number | undefined>(undefined)
 const buyChain = ref<Chain>(tokenChainStore.chains[0])
 const buyToken = ref(tokenChainStore.tokens[sellChain.value.id][0])
 const { data, buyAmount, isLoading } = useRampXSwap(sellChain, sellToken, sellAmount, buyChain, buyToken)
-const onClick = useExecuteSwap()
+const onClick = useExecuteSwap();
 
-const response = await fetch("https://test-backend-749089128200.us-central1.run.app/token/details/usd-coin")
-console.log("GECKO", await response.json())
+(async function(){
+  const response = await fetch("https://test-backend-749089128200.us-central1.run.app/token/details/usd-coin")
+  console.log("GECKO", await response.json())
+})()
 
 const switchBuySell = () => {
   const tempToken = buyToken.value
